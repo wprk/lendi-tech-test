@@ -1,11 +1,11 @@
 import ApplicationsService from '../../services/applications.service';
 
 export class Controller {
-  all(req, res) {
+  find(req, res) {
     ApplicationsService.all().then(r => res.json(r));
   }
 
-  byId(req, res) {
+  findById(req, res) {
     ApplicationsService.byId(req.params.id).then(r => {
       if (r) res.json(r);
       else res.status(404).end();
@@ -31,6 +31,13 @@ export class Controller {
         res.status(404).end();
       }
     });
+  }
+
+  updateById(req, res) {
+    const application = req.body;
+    ApplicationsService.updateById(req.params.id, application).then(r =>
+      res.status(200).json(r)
+    );
   }
 }
 export default new Controller();

@@ -19,6 +19,10 @@ class ApplicationsService {
   deleteById(id) {
     return db.deleteById(id);
   }
+
+  updateById(id, application) {
+    return db.updateById(id, application);
+  }
 }
 
 export default new ApplicationsService();

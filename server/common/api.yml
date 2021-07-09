@@ -88,6 +88,26 @@ paths:
           description: Return the status of the request
         404:
           description: Application not found
+    put:
+      tags:
+        - Applications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the application to update
+          type: integer
+        - name: application
+          in: body
+          description: an updated application
+          required: true
+          schema: 
+            $ref: "#/definitions/ApplicationBody"
+      responses:
+        200:
+          description: Return the application with the specified id
+        404:
+          description: Application not found
     
 
   /spec:

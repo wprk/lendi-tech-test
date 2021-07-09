@@ -44,6 +44,12 @@ class ApplicationsDatabase {
 
     return Promise.resolve(record);
   }
+
+  updateById(id, application) {
+    this._data[id] = application;
+
+    return Promise.resolve(this.byId(id));
+  }
 }
 
 export default new ApplicationsDatabase();
