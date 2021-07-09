@@ -1,7 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
 import DB from '../../db';
-import Application from './Application';
 
 class Asset extends Model {}
 
@@ -19,12 +18,12 @@ Asset.init(
   {
     sequelize: DB,
     paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     deletedAt: 'deleted_at',
     modelName: 'assets',
   }
 );
-
-// Asset.belongsTo(Application);
 
 (async () => {
   await Asset.sync({ force: true });

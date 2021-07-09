@@ -17,6 +17,34 @@ produces:
 
 
 definitions:
+  AssetBody:
+    type: object
+    title: asset
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        example: Property
+      value:
+        type: number
+        example: 100000
+
+  LiabilityBody:
+    type: object
+    title: liability
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        example: Credit Card
+      value:
+        type: number
+        example: 2345
+
   ApplicationBody:
     type: object
     title: application
@@ -34,6 +62,14 @@ definitions:
       loan_amount:
         type: number
         example: 100000
+      assets:
+        type: array
+        items:
+          $ref: "#/definitions/AssetBody"
+      liabilities:
+        type: array
+        items:
+          $ref: "#/definitions/LiabilityBody"
 
 paths:
   /applications:

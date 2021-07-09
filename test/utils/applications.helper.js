@@ -21,6 +21,24 @@ export const generateApplication = (application = {}) => {
     applicant_first_name: 'John',
     applicant_last_name: 'Doe',
     loan_amount: 100000,
+    assets: [],
+    liabilities: [],
     ...application,
+  };
+};
+
+export const generateAsset = (asset = {}) => {
+  return {
+    name: 'Property',
+    value: 100000,
+    ...asset,
+  };
+};
+
+export const generateLiability = (liability = {}) => {
+  return {
+    name: 'Credit Card',
+    value: 100000,
+    ...liability,
   };
 };

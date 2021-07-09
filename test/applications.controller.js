@@ -7,6 +7,8 @@ import {
   createApplication,
   createApplications,
   generateApplication,
+  generateAsset,
+  generateLiability,
 } from './utils/applications.helper';
 
 const expect = chai.expect;
@@ -30,21 +32,33 @@ describe('Applications - GET /applications', async () => {
 });
 
 describe('Applications - POST /applications', () => {
-  let application;
+  let basicApplication;
+  let complexApplication;
+  let asset;
+  let liability;
 
   beforeEach(async () => {
     await DB.sync({ force: true });
-    application = generateApplication({
+    asset = generateAsset();
+    liability = generateLiability();
+    basicApplication = generateApplication({
       applicant_first_name: 'John',
       applicant_last_name: 'Doe',
       loan_amount: 100000,
+    });
+    complexApplication = generateApplication({
+      applicant_first_name: 'John',
+      applicant_last_name: 'Doe',
+      loan_amount: 100000,
+      assets: [asset],
+      liabilities: [liability],
     });
   });
 
   it('should add a new application', () => {
     return request(Server)
       .post('/api/v1/applications')
-      .send(application)
+      .send(basicApplication)
       .expect('Content-Type', /json/)
       .then(r => {
         expect(r.body)
@@ -54,6 +68,28 @@ describe('Applications - POST /applications', () => {
             applicant_last_name: 'Doe',
             loan_amount: 100000,
           });
+      });
+  });
+
+  it('should add a new application with assets and liabilities', () => {
+    return request(Server)
+      .post('/api/v1/applications')
+      .send(complexApplication)
+      .expect('Content-Type', /json/)
+      .then(r => {
+        expect(r.body)
+          .to.be.an('object')
+          .to.include({
+            applicant_first_name: 'John',
+            applicant_last_name: 'Doe',
+            loan_amount: 100000,
+          });
+        expect(r.body.assets)
+          .to.be.an('array')
+          .of.length(1);
+        expect(r.body.liabilities)
+          .to.be.an('array')
+          .of.length(1);
       });
   });
 });
