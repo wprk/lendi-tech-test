@@ -17,6 +17,8 @@ Asset.init(
   },
   {
     sequelize: DB,
+    paranoid: true,
+    deletedAt: 'deleted_at',
     modelName: 'assets',
   }
 );
