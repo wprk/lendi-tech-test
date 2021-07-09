@@ -42,16 +42,19 @@ export default class ExpressServer {
         `up and running in ${process.env.NODE_ENV ||
           'development'} @: ${os.hostname()} on port: ${p}}`
       );
+
       try {
         await DB.authenticate();
         l.info('Database connection established.');
+        await DB.sync({ force: true });
+        l.info('Database schema synced.');
       } catch (error) {
         l.error('Unable to connect to database. %s', [error]);
       }
     };
 
     oas(app, this.routes)
-      .then(() => {
+      .then(async () => {
         http.createServer(app).listen(port, welcome(port));
       })
       .catch(e => {

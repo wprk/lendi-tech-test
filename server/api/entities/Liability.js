@@ -10,6 +10,7 @@ Liability.init(
     id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
     },
     application_id: DataTypes.UUID,
     name: DataTypes.STRING,
@@ -23,6 +24,10 @@ Liability.init(
   }
 );
 
-Liability.belongsTo(Application);
+// Liability.belongsTo(Application);
+
+(async () => {
+  await Liability.sync({ force: true });
+})();
 
 export default Liability;

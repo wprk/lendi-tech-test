@@ -24,7 +24,6 @@ export class Controller {
 
   deleteById(req, res) {
     ApplicationsService.deleteById(req.params.id).then(r => {
-      console.log(r);
       if (r) {
         res.status(204).end();
       } else {
@@ -35,9 +34,13 @@ export class Controller {
 
   updateById(req, res) {
     const application = req.body;
-    ApplicationsService.updateById(req.params.id, application).then(r =>
-      res.status(200).json(r)
-    );
+    ApplicationsService.updateById(req.params.id, application).then(r => {
+      if (r) {
+        res.status(200).json(r);
+      } else {
+        res.status(404).end();
+      }
+    });
   }
 }
 export default new Controller();

@@ -11,6 +11,7 @@ Application.init(
     id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
     },
     applicant_first_name: DataTypes.STRING,
     applicant_last_name: DataTypes.STRING,
@@ -20,6 +21,8 @@ Application.init(
   {
     sequelize: DB,
     paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     deletedAt: 'deleted_at',
     modelName: 'applications',
   }
@@ -27,5 +30,9 @@ Application.init(
 
 Application.hasMany(Asset);
 Application.hasMany(Liability);
+
+(async () => {
+  await Application.sync({ force: true });
+})();
 
 export default Application;

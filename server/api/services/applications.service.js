@@ -1,24 +1,26 @@
-import db from './applications.db.service';
+import Application from '../entities/Application';
 
 class ApplicationsService {
-  findAll() {
-    return db.findAll();
+  async findAll() {
+    return await Application.findAll();
   }
 
-  findById(id) {
-    return db.findById(id);
+  async findById(id) {
+    return await Application.findByPk(id);
   }
 
-  create(application) {
-    return db.insert(application);
+  async create(application) {
+    return await Application.create(application);
   }
 
-  deleteById(id) {
-    return db.deleteById(id);
+  async deleteById(id) {
+    return await Application.destroy({ where: { id } });
   }
 
-  updateById(id, application) {
-    return db.updateById(id, application);
+  async updateById(id, application) {
+    await Application.update(application, { where: { id } });
+
+    return this.findById(id);
   }
 }
 

@@ -68,7 +68,7 @@ paths:
           in: path
           required: true
           description: The id of the application to retrieve
-          type: integer
+          type: string
       responses:
         200:
           description: Return the application with the specified id
@@ -82,7 +82,7 @@ paths:
           in: path
           required: true
           description: The id of the application to delete
-          type: integer
+          type: string
       responses:
         204:
           description: Return the status of the request
@@ -96,7 +96,7 @@ paths:
           in: path
           required: true
           description: The id of the application to update
-          type: integer
+          type: string
         - name: application
           in: body
           description: an updated application

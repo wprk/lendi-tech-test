@@ -10,6 +10,7 @@ Asset.init(
     id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
     },
     application_id: DataTypes.UUID,
     name: DataTypes.STRING,
@@ -23,6 +24,10 @@ Asset.init(
   }
 );
 
-Asset.belongsTo(Application);
+// Asset.belongsTo(Application);
+
+(async () => {
+  await Asset.sync({ force: true });
+})();
 
 export default Asset;

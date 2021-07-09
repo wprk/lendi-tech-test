@@ -1,116 +1,163 @@
 import chai from 'chai';
 import request from 'supertest';
 import Server from '../server';
+import Application from '../server/api/entities/Application';
+import DB from '../server/db';
+import {
+  createApplication,
+  createApplications,
+  generateApplication,
+} from './utils/applications.helper';
 
 const expect = chai.expect;
 
-describe('Applications', () => {
-  it('should get all applications', () =>
-    request(Server)
+describe('Applications - GET /applications', async () => {
+  beforeEach(async () => {
+    await DB.sync({ force: true });
+    await createApplications(2);
+  });
+
+  it('should get all applications', () => {
+    return request(Server)
       .get('/api/v1/applications')
       .expect('Content-Type', /json/)
       .then(r => {
         expect(r.body)
           .to.be.an('array')
           .of.length(2);
-      }));
+      });
+  });
+});
 
-  it('should add a new application', () =>
-    request(Server)
-      .post('/api/v1/applications')
-      .send({
-        applicant_first_name: 'John',
-        applicant_last_name: 'Doe',
-        loan_amount: 100000,
-      })
-      .expect('Content-Type', /json/)
-      .then(r => {
-        expect(r.body)
-          .to.be.an('object')
-          .to.deep.equal({
-            id: 2,
-            applicant_first_name: 'John',
-            applicant_last_name: 'Doe',
-            loan_amount: 100000,
-          });
-      }));
+describe('Applications - POST /applications', () => {
+  let application;
 
-  it('should get an application by id', () =>
-    request(Server)
-      .get('/api/v1/applications/2')
-      .expect('Content-Type', /json/)
-      .then(r => {
-        expect(r.body)
-          .to.be.an('object')
-          .to.deep.equal({
-            id: 2,
-            applicant_first_name: 'John',
-            applicant_last_name: 'Doe',
-            loan_amount: 100000,
-          });
-      }));
-
-  it('should delete an application by id', () => {
-    it('returns 204 when successful', () => {
-      request(Server)
-        .delete('/api/v1/applications/2')
-        .expect('Content-Type', /json/)
-        .then(r => {
-          expect(r.statusCode)
-            .to.be.an('number')
-            .to.equal(204);
-        });
-    });
-
-    it('returns 404 if not found', () => {
-      request(Server)
-        .delete('/api/v1/applications/25')
-        .expect('Content-Type', /json/)
-        .then(r => {
-          expect(r.statusCode)
-            .to.be.an('number')
-            .to.equal(404);
-        });
+  beforeEach(async () => {
+    await DB.sync({ force: true });
+    application = generateApplication({
+      applicant_first_name: 'John',
+      applicant_last_name: 'Doe',
+      loan_amount: 100000,
     });
   });
 
-  it('should update an application by id', () => {
-    it('returns 200 when successful', () => {
-      request(Server)
-        .put('/api/v1/applications/2', {
-          applicant_first_name: 'Joe',
-          applicant_last_name: 'Bloggs',
-          loan_amount: 150000,
-        })
-        .expect('Content-Type', /json/)
-        .then(r => {
-          expect(r.statusCode)
-            .to.be.an('number')
-            .to.equal(200);
-          expect(r.body)
-            .to.be.an('object')
-            .to.deep.equal({
-              id: 2,
-              applicant_first_name: 'Joe',
-              applicant_last_name: 'Bloggs',
-              loan_amount: 150000,
-            });
-        });
-    });
+  it('should add a new application', () => {
+    return request(Server)
+      .post('/api/v1/applications')
+      .send(application)
+      .expect('Content-Type', /json/)
+      .then(r => {
+        expect(r.body)
+          .to.be.an('object')
+          .to.include({
+            applicant_first_name: 'John',
+            applicant_last_name: 'Doe',
+            loan_amount: 100000,
+          });
+      });
+  });
+});
 
-    it('returns 404 if not found', () => {
-      request(Server)
-        .put('/api/v1/applications/25', {
-          applicant_first_name: 'Joe',
-          applicant_last_name: 'Bloggs',
-          loan_amount: 150000,
-        })
-        .expect('Content-Type', /json/)
-        .then(r => {
-          expect(r.statusCode)
-            .to.be.an('number')
-            .to.equal(404);
-        });
-    });
+describe('Applications - GET /applications/:id', async () => {
+  let application;
+
+  beforeEach(async () => {
+    await DB.sync({ force: true });
+    application = await createApplication();
+  });
+
+  it('should get an application by id', () => {
+    return request(Server)
+      .get(`/api/v1/applications/${application.id}`)
+      .expect('Content-Type', /json/)
+      .then(r => {
+        expect(r.body)
+          .to.be.an('object')
+          .to.include({
+            applicant_first_name: application.applicant_first_name,
+            applicant_last_name: application.applicant_last_name,
+            loan_amount: application.loan_amount,
+          });
+      });
+  });
+});
+
+describe('Applications - DELETE /applications/:id', async () => {
+  let application;
+
+  beforeEach(async () => {
+    await DB.sync({ force: true });
+    application = await createApplication();
+  });
+
+  it('when deleting an application returns 204 when successful', () => {
+    return request(Server)
+      .delete(`/api/v1/applications/${application.id}`)
+      .then(async r => {
+        expect(r.statusCode)
+          .to.be.a('number')
+          .to.equal(204);
+
+        const applications = await Application.findAll();
+        expect(applications.length)
+          .to.be.a('number')
+          .to.equal(0);
+      });
+  });
+
+  it('when deleting an application returns 404 if not found', () => {
+    return request(Server)
+      .delete(`/api/v1/applications/INVALID_ID`)
+      .then(async r => {
+        expect(r.statusCode)
+          .to.be.a('number')
+          .to.equal(404);
+
+        const applications = await Application.findAll();
+        expect(applications.length)
+          .to.be.a('number')
+          .to.equal(1);
+      });
+  });
+});
+
+describe('Applications - PUT /applications/:id', async () => {
+  let application;
+
+  const updatedApplication = {
+    applicant_first_name: 'Joe',
+    applicant_last_name: 'Bloggs',
+    loan_amount: 150000,
+  };
+
+  beforeEach(async () => {
+    await DB.sync({ force: true });
+    application = await createApplication();
+  });
+
+  it('when updating an application returns 200 when successful', () => {
+    return request(Server)
+      .put(`/api/v1/applications/${application.id}`)
+      .send(updatedApplication)
+      .expect('Content-Type', /json/)
+      .then(r => {
+        expect(r.statusCode)
+          .to.be.a('number')
+          .to.equal(200);
+        expect(r.body)
+          .to.be.an('object')
+          .to.include(updatedApplication);
+      });
+  });
+
+  it('when updating an application returns 404 if not found', () => {
+    return request(Server)
+      .put('/api/v1/applications/INVALID_ID')
+      .send(updatedApplication)
+      .then(r => {
+        expect(r.statusCode)
+          .to.be.a('number')
+          .to.equal(404);
+      });
   });
 });
