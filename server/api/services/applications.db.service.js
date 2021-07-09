@@ -15,11 +15,11 @@ class ApplicationsDatabase {
     });
   }
 
-  all() {
+  findAll() {
     return Promise.resolve(this._data);
   }
 
-  byId(id) {
+  findById(id) {
     return Promise.resolve(this._data[id]);
   }
 
@@ -48,7 +48,7 @@ class ApplicationsDatabase {
   updateById(id, application) {
     this._data[id] = application;
 
-    return Promise.resolve(this.byId(id));
+    return Promise.resolve(this.findById(id));
   }
 }
 

@@ -1,12 +1,12 @@
 import ApplicationsService from '../../services/applications.service';
 
 export class Controller {
-  find(req, res) {
-    ApplicationsService.all().then(r => res.json(r));
+  findAll(req, res) {
+    ApplicationsService.findAll().then(r => res.json(r));
   }
 
   findById(req, res) {
-    ApplicationsService.byId(req.params.id).then(r => {
+    ApplicationsService.findById(req.params.id).then(r => {
       if (r) res.json(r);
       else res.status(404).end();
     });

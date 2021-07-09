@@ -1,15 +1,12 @@
-import l from '../../common/logger';
 import db from './applications.db.service';
 
 class ApplicationsService {
-  all() {
-    l.info(`${this.constructor.name}.all()`);
-    return db.all();
+  findAll() {
+    return db.findAll();
   }
 
-  byId(id) {
-    l.info(`${this.constructor.name}.byId(${id})`);
-    return db.byId(id);
+  findById(id) {
+    return db.findById(id);
   }
 
   create(application) {
