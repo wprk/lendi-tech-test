@@ -15,6 +15,10 @@ class ApplicationsService {
   create(application) {
     return db.insert(application);
   }
+
+  deleteById(id) {
+    return db.deleteById(id);
+  }
 }
 
 export default new ApplicationsService();

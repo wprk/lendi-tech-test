@@ -21,5 +21,16 @@ export class Controller {
         .json(r)
     );
   }
+
+  deleteById(req, res) {
+    ApplicationsService.deleteById(req.params.id).then(r => {
+      console.log(r);
+      if (r) {
+        res.status(204).end();
+      } else {
+        res.status(404).end();
+      }
+    });
+  }
 }
 export default new Controller();

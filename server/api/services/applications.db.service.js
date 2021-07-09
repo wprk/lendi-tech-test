@@ -23,6 +23,16 @@ class ApplicationsDatabase {
     return Promise.resolve(this._data[id]);
   }
 
+  deleteById(id) {
+    if (!this._data[id]) {
+      return Promise.resolve(false);
+    }
+
+    this._data.filter(item => item.id != id);
+
+    return Promise.resolve(true);
+  }
+
   insert(application) {
     const record = {
       id: this._counter,

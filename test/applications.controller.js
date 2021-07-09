@@ -11,7 +11,7 @@ describe('Applications', () => {
       .expect('Content-Type', /json/)
       .then(r => {
         expect(r.body)
-          .to.be.an.an('array')
+          .to.be.an('array')
           .of.length(2);
       }));
 
@@ -26,7 +26,7 @@ describe('Applications', () => {
       .expect('Content-Type', /json/)
       .then(r => {
         expect(r.body)
-          .to.be.an.an('object')
+          .to.be.an('object')
           .to.deep.equal({
             id: 2,
             applicant_first_name: 'John',
@@ -41,7 +41,7 @@ describe('Applications', () => {
       .expect('Content-Type', /json/)
       .then(r => {
         expect(r.body)
-          .to.be.an.an('object')
+          .to.be.an('object')
           .to.deep.equal({
             id: 2,
             applicant_first_name: 'John',
@@ -49,4 +49,30 @@ describe('Applications', () => {
             loan_amount: 100000,
           });
       }));
+
+  it('should delete an application by id', () => {
+    it('returns 204 when successful', () => {
+      request(Server)
+        .delete('/api/v1/applications/2')
+        .expect('Content-Type', /json/)
+        .then(r => {
+          console.log(r);
+          expect(r.statusCode)
+            .to.be.an('number')
+            .to.equal(204);
+        });
+    });
+
+    it('returns 404 if not found', () => {
+      request(Server)
+        .delete('/api/v1/applications/25')
+        .expect('Content-Type', /json/)
+        .then(r => {
+          console.log(r);
+          expect(r.statusCode)
+            .to.be.an('number')
+            .to.equal(404);
+        });
+    });
+  });
 });
