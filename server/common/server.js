@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as http from 'http';
 import * as os from 'os';
 import cookieParser from 'cookie-parser';
+import DB from '../db';
 
 import oas from './swagger';
 
@@ -34,11 +35,18 @@ export default class ExpressServer {
   }
 
   listen(port = process.env.PORT) {
-    const welcome = p => () =>
+    const welcome = p => async () => {
       l.info(
         `up and running in ${process.env.NODE_ENV ||
           'development'} @: ${os.hostname()} on port: ${p}}`
       );
+      try {
+        await DB.authenticate();
+        l.info('Database connection established.');
+      } catch (error) {
+        l.error('Unable to connect to database. %s', [error]);
+      }
+    };
 
     oas(app, this.routes)
       .then(() => {
