@@ -52,6 +52,7 @@ definitions:
       - applicant_first_name
       - applicant_last_name
       - loan_amount
+      - lender_id
     properties:
       applicant_first_name:
         type: string
@@ -62,6 +63,10 @@ definitions:
       loan_amount:
         type: number
         example: 100000
+      lender_id:
+        type: string
+        enum: ['CMB', 'STG', 'NCP', 'NAB']
+        example: NAB
       assets:
         type: array
         items:

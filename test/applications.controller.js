@@ -45,11 +45,13 @@ describe('Applications - POST /applications', () => {
       applicant_first_name: 'John',
       applicant_last_name: 'Doe',
       loan_amount: 100000,
+      lender_id: 'NAB',
     });
     complexApplication = generateApplication({
       applicant_first_name: 'John',
       applicant_last_name: 'Doe',
       loan_amount: 100000,
+      lender_id: 'NAB',
       assets: [asset],
       liabilities: [liability],
     });
@@ -67,6 +69,7 @@ describe('Applications - POST /applications', () => {
             applicant_first_name: 'John',
             applicant_last_name: 'Doe',
             loan_amount: 100000,
+            lender_id: 'NAB',
           });
       });
   });
@@ -83,6 +86,7 @@ describe('Applications - POST /applications', () => {
             applicant_first_name: 'John',
             applicant_last_name: 'Doe',
             loan_amount: 100000,
+            lender_id: 'NAB',
           });
         expect(r.body.assets)
           .to.be.an('array')
@@ -113,6 +117,7 @@ describe('Applications - GET /applications/:id', async () => {
             applicant_first_name: application.applicant_first_name,
             applicant_last_name: application.applicant_last_name,
             loan_amount: application.loan_amount,
+            lender_id: application.lender_id,
           });
       });
   });
@@ -164,6 +169,7 @@ describe('Applications - PUT /applications/:id', async () => {
     applicant_first_name: 'Joe',
     applicant_last_name: 'Bloggs',
     loan_amount: 150000,
+    lender_id: 'STG',
   };
 
   beforeEach(async () => {
@@ -174,8 +180,7 @@ describe('Applications - PUT /applications/:id', async () => {
   it('when updating an application returns 200 when successful', () => {
     return request(Server)
       .put(`/api/v1/applications/${application.id}`)
-      .send(updatedApplication)
-      .expect('Content-Type', /json/)
+      .send({ ...application.toJSON(), ...updatedApplication })
       .then(r => {
         expect(r.statusCode)
           .to.be.a('number')
@@ -189,7 +194,7 @@ describe('Applications - PUT /applications/:id', async () => {
   it('when updating an application returns 404 if not found', () => {
     return request(Server)
       .put('/api/v1/applications/INVALID_ID')
-      .send(updatedApplication)
+      .send({ ...application.toJSON(), ...updatedApplication })
       .then(r => {
         expect(r.statusCode)
           .to.be.a('number')

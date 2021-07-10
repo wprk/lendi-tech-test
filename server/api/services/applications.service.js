@@ -30,6 +30,7 @@ class ApplicationsService {
     const application = await this.findById(id);
 
     if (application) {
+      // @TODO - Improve logic here to ensure assets and liabilities are also updated
       return await application.update(updates);
     }
 

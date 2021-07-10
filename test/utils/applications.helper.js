@@ -21,6 +21,7 @@ export const generateApplication = (application = {}) => {
     applicant_first_name: 'John',
     applicant_last_name: 'Doe',
     loan_amount: 100000,
+    lender_id: 'NAB',
     assets: [],
     liabilities: [],
     ...application,

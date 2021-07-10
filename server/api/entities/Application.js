@@ -28,8 +28,8 @@ Application.init(
   }
 );
 
-Application.hasMany(Asset);
-Application.hasMany(Liability);
+Application.hasMany(Asset, { foreignKey: 'application_id' });
+Application.hasMany(Liability, { foreignKey: 'application_id' });
 
 (async () => {
   await Application.sync({ force: true });
