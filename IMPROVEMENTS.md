@@ -52,6 +52,9 @@ it stands as the API is just performing very simple CRUD operations. However is 
 would be beneficial to drop down a level and add unit tests to the individual functions at the service or database layer.
 
 Would also be good to add more edge-case tests to cover the various validation errors to ensure that changes to our 
-swagger specification don't introduce bugs further down the road. 
+swagger specification don't introduce bugs further down the road.
 
+## .env & configuration
 
+In order to give you a working codebase I have removed .env from the .gitignore file. In a real repository I wouldn't 
+commit and env or configuration files to ensure any secrets aren't potentially leaked out.
