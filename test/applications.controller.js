@@ -170,6 +170,26 @@ describe('Applications - PUT /applications/:id', async () => {
     applicant_last_name: 'Bloggs',
     loan_amount: 150000,
     lender_id: 'STG',
+    assets: [
+      generateAsset({
+        name: 'Common Banana',
+        value: 5,
+      }),
+      generateAsset({
+        name: 'Rare Banana',
+        value: 5000,
+      }),
+    ],
+    liabilities: [
+      generateLiability({
+        name: 'Car Loan',
+        value: 5800,
+      }),
+      generateLiability({
+        name: 'Student Loadn',
+        value: 28000,
+      }),
+    ],
   };
 
   beforeEach(async () => {
@@ -187,7 +207,18 @@ describe('Applications - PUT /applications/:id', async () => {
           .to.equal(200);
         expect(r.body)
           .to.be.an('object')
-          .to.include(updatedApplication);
+          .to.include({
+            applicant_first_name: updatedApplication.applicant_first_name,
+            applicant_last_name: updatedApplication.applicant_last_name,
+            loan_amount: updatedApplication.loan_amount,
+            lender_id: updatedApplication.lender_id,
+          });
+        expect(r.body.assets)
+          .to.be.an('array')
+          .of.length(2);
+        expect(r.body.liabilities)
+          .to.be.an('array')
+          .of.length(2);
       });
   });
 

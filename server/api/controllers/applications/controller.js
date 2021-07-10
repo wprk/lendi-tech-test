@@ -34,13 +34,19 @@ export class Controller {
 
   updateById(req, res) {
     const application = req.body;
-    ApplicationsService.updateById(req.params.id, application).then(r => {
-      if (r) {
-        res.status(200).json(r);
-      } else {
-        res.status(404).end();
-      }
-    });
+    ApplicationsService.updateById(req.params.id, application)
+      .then(r => {
+        console.log('here');
+
+        if (r) {
+          res.status(200).json(r);
+        } else {
+          res.status(404).end();
+        }
+      })
+      .catch(() => {
+        res.status(500).end();
+      });
   }
 }
 export default new Controller();

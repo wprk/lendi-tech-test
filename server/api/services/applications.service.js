@@ -1,4 +1,7 @@
 import Application from '../entities/Application';
+import DB from '../../db';
+import Liability from '../entities/Liability';
+import Asset from '../entities/Asset';
 
 class ApplicationsService {
   async findAll() {
@@ -27,14 +30,44 @@ class ApplicationsService {
   }
 
   async updateById(id, updates) {
-    const application = await this.findById(id);
+    const t = await DB.transaction();
+    try {
+      let application = await Application.findByPk(id, {
+        include: ['assets', 'liabilities'],
+        transaction: t,
+      });
 
-    if (application) {
-      // @TODO - Improve logic here to ensure assets and liabilities are also updated
-      return await application.update(updates);
+      if (!application) return false;
+
+      const assets = updates.assets.map(asset => {
+        return { application_id: application.id, ...asset };
+      });
+      delete updates.assets;
+      const liabilities = updates.liabilities.map(liability => {
+        return { application_id: application.id, ...liability };
+      });
+      delete updates.liabilities;
+
+      Object.keys(updates).map(key => {
+        application[key] = updates[key];
+      });
+      await application.save({ transaction: t });
+
+      await application.setAssets([], { transaction: t });
+      await Asset.bulkCreate(assets, { transaction: t });
+      await application.setLiabilities([], { transaction: t });
+      await Liability.bulkCreate(liabilities, { transaction: t });
+
+      await t.commit();
+
+      return await application.reload();
+    } catch (error) {
+      console.log(error);
+
+      await t.rollback();
+
+      throw new Error('Unable to update application.');
     }
-
-    return false;
   }
 }
 
